@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use axum::async_trait;
+use redis::Client;
 use serde::{Deserialize, Serialize};
 
 pub type Session = Vec<Peer>;
@@ -17,7 +18,18 @@ pub struct Peer {
     offer: Offer,
 }
 
-pub struct RedisSessionRepo;
+impl RedisSessionRepo {
+    pub fn new(client: Client) -> Self {
+        Self {
+            client: Arc::new(client),
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct RedisSessionRepo {
+    client: Arc<Client>,
+}
 
 #[async_trait]
 impl SessionRepo for RedisSessionRepo {
