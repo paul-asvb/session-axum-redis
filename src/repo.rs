@@ -26,6 +26,17 @@ impl RedisSessionRepo {
     }
 }
 
+pub type DynSessionRepo = Arc<dyn SessionRepo + Send + Sync>;
+
+
+#[async_trait]
+pub trait SessionRepo {
+    async fn find(&self, session_id: String) -> Result<Session, SessionRepoError>;
+    async fn create(&self, session: Session) -> Result<bool, SessionRepoError>;
+}
+
+
+
 #[derive(Clone)]
 pub struct RedisSessionRepo {
     client: Arc<Client>,
@@ -33,6 +44,8 @@ pub struct RedisSessionRepo {
 
 #[async_trait]
 impl SessionRepo for RedisSessionRepo {
+   
+
     async fn find(&self, session_id: String) -> Result<Session, SessionRepoError> {
         unimplemented!()
     }
@@ -42,13 +55,6 @@ impl SessionRepo for RedisSessionRepo {
     }
 }
 
-pub type DynSessionRepo = Arc<dyn SessionRepo + Send + Sync>;
-
-#[async_trait]
-pub trait SessionRepo {
-    async fn find(&self, session_id: String) -> Result<Session, SessionRepoError>;
-    async fn create(&self, session: Session) -> Result<bool, SessionRepoError>;
-}
 
 #[derive(Debug)]
 enum SessionRepoError {
