@@ -4,7 +4,7 @@ use axum::{
     handler::Handler,
     http::{Request, Response, StatusCode},
     response::{Html, IntoResponse},
-    routing::get,
+    routing::{get, post},
     Extension, Router,
 };
 use repo::{DynSessionRepo, RedisSessionRepo};
@@ -17,6 +17,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(root))
+        .route("/testp", post(test))
         .route("/test", get(test))
         .fallback(handler_404.into_service())
         .layer(Extension(session_repo));
